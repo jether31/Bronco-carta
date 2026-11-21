@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Una carta para Bronco</title>
+
+<style>
+
+/* CONFIGURACIÓN GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at center, #765337, #382518 70%, #170f0a);
+    font-family: Georgia, serif;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 35px 15px;
+}
+
+/* FONDO VINTAGE */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 8px,
+            rgba(255,255,255,.02) 9px
+        );
+
+    z-index: 0;
+}
+
+/* CONTENEDOR */
+.container {
+    width: 100%;
+    max-width: 750px;
+
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+/* ENCABEZADO */
+.subtitle {
+    color: #d8b98e;
+    font-size: 12px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+h1 {
+    color: #f1dfc2;
+    font-size: clamp(30px, 7vw, 45px);
+    font-weight: normal;
+    margin-bottom: 30px;
+}
+
+/* IMAGEN DE LA CARTA */
+.letter-frame {
+    width: 100%;
+    max-width: 570px;
+    padding: 12px;
+
+    background: linear-gradient(135deg, #c6a477, #79512e);
+    border: 1px solid #e0c092;
+
+    box-shadow:
+        0 15px 40px #0009,
+        0 0 20px #d5b48633;
+
+    animation: appear 1.2s ease;
+}
+
+.letter-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    background: #e8d5b5;
+}
+
+/* ANIMACIÓN DE APARICIÓN */
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* TEXTO INFERIOR */
+.footer {
+    color: #d8bd99;
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-top: 25px;
+    text-transform: uppercase;
+}
+
+/* NOTAS MUSICALES */
+.music-note {
+    position: fixed;
+    bottom: -60px;
+
+    color: #f0d3a5;
+    pointer-events: none;
+    z-index: 1;
+
+    text-shadow:
+        0 0 10px #e5bd85,
+        0 0 20px #c99b64;
+
+    animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: .85;
+    }
+
+    50% {
+        transform: translateY(-55vh) translateX(20px) rotate(15deg);
+        opacity: .8;
+    }
+
+    85% {
+        opacity: .7;
+    }
+
+    100% {
+        transform: translateY(-115vh) translateX(-20px) rotate(-15deg);
+        opacity: 0;
+    }
+}
+
+/* REPRODUCTOR */
+.music-control {
+    margin-top: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+#status {
+    color: #e2c49c;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+/* CELULARES */
+@media(max-width: 500px) {
+
+    body {
+        padding: 25px 12px;
+    }
+
+    .letter-frame {
+        padding: 8px;
+    }
+
+    h1 {
+        margin-bottom: 25px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <div class="subtitle">
+        Una melodía especial
+    </div>
+
+    <h1>Para Bronco</h1>
+
+    <!-- IMAGEN COMPLETA DE TU CARTA -->
+    <div class="letter-frame">
+
+        <img
+            src="Dedi.jpeg"
+            alt="Carta para Bronco"
+            class="letter-image"
+        >
+
+    </div>
+
+
+
+    </div>
+
+</main>
+
+<!-- ÚNICO ARCHIVO DE MÚSICA -->
+<audio id="song" loop preload="auto">
+    <source src="Cancion.mp4" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* ELEMENTOS */
+const song = document.getElementById("song");
+const button = document.getElementById("musicButton");
+const statusText = document.getElementById("status");
+
+let noteInterval = null;
+
+/* CREAR NOTAS MUSICALES */
+function createNote() {
+
+    const note = document.createElement("div");
+
+    const symbols = ["♪", "♫", "♬", "♩"];
+
+    note.className = "music-note";
+
+    note.textContent =
+        symbols[Math.floor(Math.random() * symbols.length)];
+
+    note.style.left = Math.random() * 100 + "vw";
+
+    note.style.fontSize =
+        (20 + Math.random() * 25) + "px";
+
+    const duration = 5 + Math.random() * 4;
+
+    note.style.animationDuration = duration + "s";
+
+    document.body.appendChild(note);
+
+    setTimeout(() => {
+        note.remove();
+    }, duration * 1000);
+}
+
+/* INICIAR NOTAS */
+function startNotes() {
+
+    if (noteInterval) return;
+
+    createNote();
+
+    noteInterval = setInterval(createNote, 400);
+}
+
+/* DETENER NOTAS */
+function stopNotes() {
+
+    clearInterval(noteInterval);
+
+    noteInterval = null;
+
+    document.querySelectorAll(".music-note").forEach(note => {
+        note.remove();
+    });
+}
+
+/* ACTUALIZAR REPRODUCTOR */
+function updatePlayer() {
+
+    if (song.paused) {
+
+        button.textContent = "♪ Reproducir canción";
+        statusText.textContent = "Canción pausada.";
+
+        stopNotes();
+
+    } else {
+
+        button.textContent = "Ⅱ Pausar canción";
+        statusText.textContent = "♪ Reproduciendo...";
+
+        startNotes();
+    }
+}
+
+/* REPRODUCIR Y PAUSAR */
+async function toggleMusic() {
+
+    if (song.paused) {
+
+        try {
+
+            await song.play();
+
+            updatePlayer();
+
+        } catch (error) {
+
+            statusText.textContent =
+                "No se pudo reproducir. Revisa tu archivo de música.";
+
+        }
+
+    } else {
+
+        song.pause();
+
+        updatePlayer();
+    }
+}
+
+/* INTENTAR REPRODUCCIÓN AUTOMÁTICA */
+window.addEventListener("load", async () => {
+
+    try {
+
+        await song.play();
+
+        updatePlayer();
+
+    } catch (error) {
+
+        statusText.textContent =
+            "Presiona reproducir para escuchar la canción.";
+
+    }
+
+});
+
+/* SINCRONIZAR SI LA CANCIÓN TERMINA O SE PAUSA */
+song.addEventListener("pause", updatePlayer);
+song.addEventListener("play", updatePlayer);
+
+</script>
+
+</body>
+</html>
